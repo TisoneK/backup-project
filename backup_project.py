@@ -364,7 +364,7 @@ def create_backup(
 
     with zipfile.ZipFile(destination, "w", compression=zcomp) as zf:
         for i, file in enumerate(files, 1):
-            arcname = file.relative_to(source)
+            arcname = file.relative_to(source.parent)  # keeps project root dir inside zip
             try:
                 zf.write(file, arcname)
             except (PermissionError, OSError) as exc:
@@ -495,7 +495,7 @@ def cmd_dry_run(args: argparse.Namespace) -> int:
     # Show a sample of included files (up to 20)
     print(bold(f"Sample of included files (first 20 of {len(files)}):"))
     for f in files[:20]:
-        rel = f.relative_to(source)
+        rel = f.relative_to(source.parent)
         size_kb = f.stat().st_size / 1024
         print(f"  {green('✓')} {rel}  {dim(f'({size_kb:.1f} KB)')}")
     if len(files) > 20:
