@@ -1,185 +1,191 @@
 # Backup Project
 
-A simple PowerShell script to backup any project directory to your Downloads folder, automatically excluding common development directories.
+A cross-platform Python tool to back up any project directory to a timestamped ZIP in `~/Downloads/backup/`, automatically excluding common development noise.
+
+**Zero dependencies — pure Python stdlib.**
 
 ## Features
 
 - 🎯 **Simple usage**: `backup_project` from any directory
-- 📁 **Auto-save**: Backups go to `Downloads\backup\{project-name}-{timestamp}.zip`
-- 🚫 **Smart exclusions**: Automatically excludes `.venv`, `node_modules`, `__pycache__`, `.git`, etc.
-- 🌍 **System-wide**: Install once, use anywhere
-- 🧩 **Modular design**: Clean architecture with reusable utility module
+- 📁 **Auto-save**: Backups go to `~/Downloads/backup/{project-name}-{timestamp}.zip`
+- 🚫 **Smart exclusions**: Skips `.venv`, `node_modules`, `__pycache__`, `.git`, `.env` files, and much more
+- 🌍 **Cross-platform**: Works on Windows, macOS, and Linux
+- 🔍 **Dry-run mode**: Preview what would be backed up without creating a ZIP
+- ⚙️ **Configurable**: Per-project `.backuprc` files for custom exclusions
+- 📦 **Zero dependencies**: No pip installs needed — pure Python stdlib
 
 ## Quick Start
 
-### Installation
-```powershell
-# Clone or download this project
-cd C:\Users\tison\Dev\backup-project
-.\install.ps1
+### Install
+
+```bash
+# Clone or download the project, then:
+python install.py
 ```
 
-### Usage
-```powershell
-# From any directory
-backup_project                    # Backup current directory
-backup_project .                  # Same as above
-backup_project C:\path\to\project # Backup specific project
+Restart your terminal, then use `backup_project` from anywhere.
+
+To uninstall:
+
+```bash
+python install.py uninstall
 ```
 
-## What Gets Excluded
+### Use
 
-### Python
-- **Environments**: `.venv`, `env/`, `venv/`
-- **Cache**: `__pycache__/`, `.pytest_cache/`, `.mypy_cache/`, `.ruff_cache/`, `.tox/`, `.nox/`
-- **Build**: `build/`, `htmlcov/`, `*.egg-info/`
-- **Bytecode**: `*.pyc`, `*.pyo`, `*.pyd`, `*.so`
-- **Type checkers**: `.pyre/`, `.pytype/`
-
-### Node.js
-- **Dependencies**: `node_modules/`, `bower_components/`, `jspm_packages/`, `web_modules/`
-- **Build output**: `dist/`, `.next/`, `.nuxt/`, `.svelte-kit/`, `.vite/`
-- **Cache**: `.npm/`, `.eslintcache`, `.stylelintcache`, `.parcel-cache/`
-- **Package files**: `*.tgz`, `.yarn-integrity`, `.pnpm-store`, `.pnp.*`
-
-### Environment Files (CRITICAL - contains secrets)
-- `.env`, `.env.*`, `.envrc`
-
-### Version Control
-- `.git/`
-
-### IDEs & Editors
-- `.vscode/`, `.vscode-test/`, `.idea/`, `.spyderproject`, `.ropeproject`
-
-### Testing & Coverage
-- `coverage/`, `.coverage*`, `.nyc_output/`
-
-### Build Artifacts & Cache
-- `build/`, `.cache/`, `.tmp/`, `temp/`, `tmp/`, `logs/`
-- Log files: `*.log`, `*.log.*`
-
-### Windows Specific
-- `Thumbs.db`, `ehthumbs.db`, `Desktop.ini`, `$RECYCLE.BIN/`
-- Installers: `*.cab`, `*.msi`, `*.msix`, `*.msm`, `*.msp`
-- Shortcuts: `*.lnk`, crash dumps: `*.stackdump`
-
-### macOS Specific
-- `.DS_Store`, `__MACOSX/`, `.localized`, `._*`
-- System directories: `.DocumentRevisions-V100`, `.fseventsd`, `.Spotlight-V100`, `.TemporaryItems`, `.Trashes`
-
-## File Structure
-
-```
-backup-project/
-├── powershell/
-│   ├── backup_project.ps1       # Main backup script (entry point)
-│   ├── install.ps1              # System-wide installer
-│   └── modules/
-│       └── Backup.Utilities.psm1 # Utility functions module
-├── tests/
-│   └── Backup.Utilities.Tests.ps1 # Unit tests (Pester)
-├── docs/
-│   ├── plans/
-│   │   ├── restructuring-plan.md
-│   │   ├── modularization-plan.md
-│   │   └── implementation-plan.md
-│   └── usage-guide.md           # Detailed usage documentation
-├── README.md                    # This file
-└── LICENSE                      # (Optional) License file
+```bash
+backup_project                          # back up the current directory
+backup_project /path/to/project         # back up a specific directory
+backup_project --dry-run                # preview without creating a ZIP
+backup_project -o ~/my-backup.zip       # custom output path
+backup_project --config ~/.backuprc     # use a specific config file
+backup_project --help                   # full usage
 ```
 
-## Example Output
+### Or run directly (no install needed)
+
+```bash
+python backup_project.py
+python backup_project.py /path/to/project
+python backup_project.py --dry-run
+```
+
+## Example output
 
 ```
 Starting backup...
-Source: C:\Users\tison\Dev\localmind
-Destination: C:\Users\tison\Downloads\backup\localmind-20260406-135432.zip
-Exclusions: 19 patterns
-Found 98 files to backup
+  Source:      /Users/tison/Dev/localmind
+  Destination: /Users/tison/Downloads/backup/localmind-20260419-104224.zip
+  Files found: 98
+
 Backup created successfully!
-File: C:\Users\tison\Downloads\backup\localmind-20260406-135432.zip
-Size: 0.12 MB
-Files: 98
+  File:  /Users/tison/Downloads/backup/localmind-20260419-104224.zip
+  Size:  0.12 MB
+  Files: 98
 ```
 
-## Installation Details
+Dry-run output:
 
-The installer:
-1. Copies main script to `%USERPROFILE%\Scripts\`
-2. Adds the Scripts folder to your user PATH
-3. Creates a batch wrapper for easy calling
-4. Creates the `Downloads\backup` folder
+```
+DRY RUN — Backup Preview
+==================================================
+  Source:      /Users/tison/Dev/localmind
+  Destination: /Users/tison/Downloads/backup/localmind-20260419-104224.zip
 
-**Note**: Restart your terminal after installation to use the new PATH.
+Files that WOULD be backed up:
+  Count: 98
+  Size:  1.43 MB (uncompressed)
+
+Excluded directories:
+  ✗ .venv/         (312 files)
+  ✗ node_modules/  (1247 files)
+  ✗ __pycache__/   (23 files)
+  ✗ .git/          (89 files)
+
+Sample of included files (first 20 of 98):
+  ✓ README.md   (4.5 KB)
+  ✓ src/main.py (2.1 KB)
+  …
+```
+
+## What gets excluded
+
+### Directories (entire subtree skipped)
+
+| Category | Directories |
+|---|---|
+| Python | `.venv`, `venv`, `env`, `__pycache__`, `.pytest_cache`, `.mypy_cache`, `.ruff_cache`, `.tox`, `.nox`, `htmlcov`, `.pyre`, `.pytype` |
+| Node.js | `node_modules`, `bower_components`, `jspm_packages`, `web_modules`, `.npm`, `.pnpm-store`, `.parcel-cache`, `.svelte-kit`, `.vite`, `.next`, `.nuxt` |
+| Build | `build`, `dist` |
+| Coverage | `coverage`, `.nyc_output` |
+| Cache / temp | `.cache`, `.tmp`, `temp`, `tmp`, `logs` |
+| VCS | `.git`, `.hg`, `.svn` |
+| IDEs | `.vscode`, `.vscode-test`, `.idea` |
+
+### Files
+
+| Category | Patterns |
+|---|---|
+| Secrets | `.env`, `.env.*`, `.envrc` |
+| Bytecode | `*.pyc`, `*.pyo`, `*.pyd`, `*.so` |
+| Logs | `*.log` |
+| Windows | `Thumbs.db`, `Desktop.ini`, `*.lnk`, `*.msi`, …  |
+| macOS | `.DS_Store`, `._*`, `__MACOSX/`, … |
+
+## Custom exclusions via `.backuprc`
+
+Place a `.backuprc` file in your project root (or pass `--config`) to add your own rules:
+
+```json
+{
+  "exclude_dirs":       ["my-cache", "scratch"],
+  "exclude_names":      ["secrets.json"],
+  "exclude_extensions": [".bak"],
+  "exclude_patterns":   ["migration_snapshots[/\\\\]"],
+  "include_defaults":   true,
+  "backup_dir":         "~/my-backups",
+  "compression":        "deflated"
+}
+```
+
+See `.backuprc.example` for a fully documented template.
+
+**Options:**
+
+| Key | Type | Default | Description |
+|---|---|---|---|
+| `exclude_dirs` | list | `[]` | Extra directory names to skip |
+| `exclude_names` | list | `[]` | Extra filenames to skip |
+| `exclude_extensions` | list | `[]` | Extra extensions to skip (e.g. `".bak"`) |
+| `exclude_patterns` | list | `[]` | Extra regex patterns matched against the relative path |
+| `include_defaults` | bool | `true` | Whether to keep the built-in exclusion list |
+| `backup_dir` | string | `~/Downloads/backup` | Where to save the ZIP |
+| `compression` | string | `"deflated"` | `deflated` / `stored` / `bzip2` / `lzma` |
+
+## Project structure
+
+```
+backup-project/
+├── backup_project.py       ← main script (zero dependencies)
+├── install.py              ← cross-platform installer
+├── pyproject.toml          ← packaging metadata
+├── .backuprc.example       ← config file template
+├── README.md
+└── tests/
+    └── test_backup.py      ← pytest suite
+```
 
 ## Development
 
-### Project Organization
-The project follows a modular architecture:
+### Run the tests
 
-- **Main Script** (`powershell/backup_project.ps1`): Orchestrates the backup workflow
-- **Utilities Module** (`powershell/modules/Backup.Utilities.psm1`): Reusable functions for:
-  - Destination path generation
-  - Exclusion pattern management
-  - File filtering and collection
-  - Archive creation
-  - Report formatting
-
-### Testing
-Run tests with Pester:
-```powershell
-Invoke-Pester -Path .\tests\
+```bash
+pip install pytest
+pytest tests/ -v
 ```
 
-### Module API Documentation
-The `Backup.Utilities.psm1` module provides the following functions:
+With coverage:
 
-- **Get-BackupDestination**: Generates timestamped backup file paths
-- **Get-ExclusionPatterns**: Returns default exclusion pattern array
-- **Test-ShouldExclude**: Tests if a file path matches exclusion patterns
-- **Get-BackupFiles**: Collects files for backup, filtering exclusions
-- **Initialize-BackupDirectory**: Creates backup directory if needed
-- **Create-BackupArchive**: Creates ZIP archive with relative paths
-- **Write-BackupReport**: Formats and displays backup completion results
-
-### Adding Custom Exclusions
-Edit the module file to add custom patterns to the default exclusion list:
-```powershell
-$defaultExclusions = @(
-    '\\\.venv\\',
-    # ... existing patterns
-    '\\your_custom_pattern\\'
-)
+```bash
+pip install pytest pytest-cov
+pytest tests/ -v --cov=backup_project --cov-report=term-missing
 ```
 
-## Technical Notes
+### Install in development mode (editable)
 
-- Uses PowerShell's built-in `Compress-Archive` cmdlet
-- Preserves directory structure in ZIP archives
-- Regex-based exclusion matching
-- Single-threaded file collection (suitable for most projects)
-- Compatible with Windows PowerShell 5.1+ and PowerShell 7+
+```bash
+pip install -e ".[dev]"
+```
 
 ## Roadmap
 
-- [ ] Support for custom exclusion configuration file (`.backuprc`)
-- [ ] Incremental backup option
-- [ ] Parallel file processing for large projects
-- [ ] Dry-run mode to preview what would be backed up
-- [ ] Configurable compression level
 - [ ] Progress bar for large backups
-- [ ] Cloud storage integration (Dropbox, Google Drive, S3)
-- [ ] Differential/incremental backup support
+- [ ] Incremental / differential backups
+- [ ] Cloud storage integration (S3, Google Drive, Dropbox)
+- [ ] Parallel file processing for very large projects
 - [ ] Backup verification (checksum validation)
-- [ ] Multi-project manifest support
-
-## Contributing
-
-1. Follow the plans in `docs/plans/` for major changes
-2. Write tests for new functionality
-3. Update documentation
-4. Ensure all tests pass before submitting changes
+- [ ] Optional GUI (ttkbootstrap or PyQt6)
 
 ## License
 
-MIT License - see LICENSE file for details.
+MIT License — see LICENSE for details.

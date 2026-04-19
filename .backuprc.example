@@ -1,0 +1,28 @@
+{
+  "_comment": "backup_project config — place this file in your project root as .backuprc",
+
+  "exclude_dirs": [
+    "my-custom-cache",
+    "scratch"
+  ],
+
+  "exclude_names": [
+    "secrets.json",
+    "local-settings.py"
+  ],
+
+  "exclude_extensions": [
+    ".bak",
+    ".tmp"
+  ],
+
+  "exclude_patterns": [
+    "migration_snapshots[/\\\\]"
+  ],
+
+  "include_defaults": true,
+
+  "backup_dir": "~/Downloads/backup",
+
+  "compression": "deflated"
+}
