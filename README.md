@@ -29,12 +29,43 @@ backup_project C:\path\to\project # Backup specific project
 
 ## What Gets Excluded
 
-- Python: `.venv`, `__pycache__`, `.pytest_cache`
-- Node.js: `node_modules`, `dist`, `.next`, `.nuxt`
-- Git: `.git`
-- IDEs: `.vscode`, `.idea`
-- Build artifacts: `coverage`, `.coverage`, `.nyc_output`
-- Temp files: `.cache`, `.tmp`, `temp`, `tmp`, `logs`, `.log`
+### Python
+- **Environments**: `.venv`, `env/`, `venv/`
+- **Cache**: `__pycache__/`, `.pytest_cache/`, `.mypy_cache/`, `.ruff_cache/`, `.tox/`, `.nox/`
+- **Build**: `build/`, `htmlcov/`, `*.egg-info/`
+- **Bytecode**: `*.pyc`, `*.pyo`, `*.pyd`, `*.so`
+- **Type checkers**: `.pyre/`, `.pytype/`
+
+### Node.js
+- **Dependencies**: `node_modules/`, `bower_components/`, `jspm_packages/`, `web_modules/`
+- **Build output**: `dist/`, `.next/`, `.nuxt/`, `.svelte-kit/`, `.vite/`
+- **Cache**: `.npm/`, `.eslintcache`, `.stylelintcache`, `.parcel-cache/`
+- **Package files**: `*.tgz`, `.yarn-integrity`, `.pnpm-store`, `.pnp.*`
+
+### Environment Files (CRITICAL - contains secrets)
+- `.env`, `.env.*`, `.envrc`
+
+### Version Control
+- `.git/`
+
+### IDEs & Editors
+- `.vscode/`, `.vscode-test/`, `.idea/`, `.spyderproject`, `.ropeproject`
+
+### Testing & Coverage
+- `coverage/`, `.coverage*`, `.nyc_output/`
+
+### Build Artifacts & Cache
+- `build/`, `.cache/`, `.tmp/`, `temp/`, `tmp/`, `logs/`
+- Log files: `*.log`, `*.log.*`
+
+### Windows Specific
+- `Thumbs.db`, `ehthumbs.db`, `Desktop.ini`, `$RECYCLE.BIN/`
+- Installers: `*.cab`, `*.msi`, `*.msix`, `*.msm`, `*.msp`
+- Shortcuts: `*.lnk`, crash dumps: `*.stackdump`
+
+### macOS Specific
+- `.DS_Store`, `__MACOSX/`, `.localized`, `._*`
+- System directories: `.DocumentRevisions-V100`, `.fseventsd`, `.Spotlight-V100`, `.TemporaryItems`, `.Trashes`
 
 ## File Structure
 

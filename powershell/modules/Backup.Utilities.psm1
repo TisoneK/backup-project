@@ -32,25 +32,119 @@ function Get-BackupDestination {
 # Function to get default exclusion patterns
 function Get-ExclusionPatterns {
     return @(
+        # Python
         '\\\.venv\\',
-        '\\node_modules\\',
         '\\__pycache__\\',
-        '\\\.git\\',
-        '\\dist\\',
         '\\\.pytest_cache\\',
-        '\\\.vscode\\',
-        '\\\.idea\\',
-        '\\coverage\\',
-        '\\\.coverage\\',
-        '\\\.nyc_output\\',
+        '\\build\\',
+        '\\\.mypy_cache\\',
+        '\\\.ruff_cache\\',
+        '\\\.tox\\',
+        '\\\.nox\\',
+        '\\htmlcov\\',
+        '\\\.egg-info\\',
+        '\\\.pyre\\',
+        '\\\.pytype\\',
+        
+        # Python files
+        '\\\.pyc$',
+        '\\\.pyo$',
+        '\\\.pyd$',
+        '\\\.so$',
+        
+        # Node.js
+        '\\node_modules\\',
+        '\\dist\\',
         '\\\.next\\',
         '\\\.nuxt\\',
+        '\\\.npm\\',
+        '\\\.eslintcache',
+        '\\\.stylelintcache',
+        '\\\.parcel-cache\\',
+        '\\\.svelte-kit\\',
+        '\\\.vite\\',
+        '\\web_modules\\',
+        
+        # Node.js files
+        '\\\.tgz$',
+        '\\\.yarn-integrity$',
+        '\\\.pnpm-store\\',
+        '\\\.pnp\..*$',
+        
+        # Environment files (CRITICAL - contains secrets)
+        '\\\.env$',
+        '\\\.env\..*$',
+        '\\\.envrc$',
+        
+        # Git
+        '\\\.git\\',
+        
+        # IDEs
+        '\\\.vscode\\',
+        '\\\.vscode-test\\',
+        '\\\.idea\\',
+        '\\\.spyderproject',
+        '\\\.ropeproject',
+        
+        # Coverage and testing
+        '\\coverage\\',
+        '\\\.coverage',
+        '\\\.coverage\..*$',
+        '\\\.nyc_output\\',
+        
+        # Build artifacts
+        '\\build\\',
         '\\\.cache\\',
         '\\\.tmp\\',
         '\\temp\\',
         '\\tmp\\',
         '\\logs\\',
-        '\\\.log\\'
+        
+        # Log files
+        '\\\.log$',
+        '\\\.log\..*$',
+        
+        # Windows specific
+        'Thumbs\.db',
+        'Thumbs\.db:encryptable',
+        'ehthumbs\.db',
+        'ehthumbs_vista\.db',
+        '\\\.stackdump$',
+        'Desktop\.ini',
+        '\$RECYCLE\.BIN\\',
+        '\\\.cab$',
+        '\\\.msi$',
+        '\\\.msix$',
+        '\\\.msm$',
+        '\\\.msp$',
+        '\\\.lnk$',
+        
+        # macOS specific
+        '\\\.DS_Store$',
+        '\\\.localized$',
+        '__MACOSX\\',
+        '\\\.AppleDouble',
+        '\\\.LSOverride',
+        'Icon\\[\\r\\n\\]',
+        '\\\._.*$',
+        '\\\.DocumentRevisions-V100',
+        '\\\.fseventsd',
+        '\\\.Spotlight-V100',
+        '\\\.TemporaryItems',
+        '\\\.Trashes',
+        '\\\.VolumeIcon\.icns',
+        
+        # Package managers
+        'bower_components\\',
+        'jspm_packages\\',
+        
+        # Misc
+        '\\\.cache\\',
+        '\\\.tmp\\',
+        '\\temp\\',
+        '\\tmp\\',
+        '\\logs\\',
+        '\\\.log$'
     )
 }
 
