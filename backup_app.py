@@ -496,7 +496,7 @@ class HomeFrame(ctk.CTkFrame):
                 comp = _CMAP.get(config.compression, zipfile.ZIP_DEFLATED)
                 with zipfile.ZipFile(destination, "w", compression=comp) as zf:
                     for i, file in enumerate(files, 1):
-                        arcname = file.relative_to(self._source)
+                        arcname = file.relative_to(self._source.parent)
                         try:
                             zf.write(file, arcname)
                         except (PermissionError, OSError):
@@ -541,7 +541,7 @@ class HomeFrame(ctk.CTkFrame):
             # Fill included list
             lines = []
             for f in files[:80]:
-                rel = f.relative_to(self._source)
+                rel = f.relative_to(self._source.parent)
                 lines.append(f"✓  {rel}")
             if len(files) > 80:
                 lines.append(f"\n… and {len(files) - 80} more files")
@@ -818,7 +818,7 @@ class DryRunWindow(ctk.CTkToplevel):
         box.pack(fill="both", expand=True, padx=24, pady=(0, 16))
         lines = []
         for f in files:
-            rel = f.relative_to(source)
+            rel = f.relative_to(source.parent)
             size = f.stat().st_size
             lines.append(f"  ✓  {rel}  ({_fmt_size(size)})")
         box.insert("0.0", "\n".join(lines))
