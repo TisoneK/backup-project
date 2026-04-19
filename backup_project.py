@@ -30,7 +30,11 @@ from typing import Iterator, NamedTuple
 # Colour helpers (no deps — fall back gracefully on Windows without ANSI)
 # ---------------------------------------------------------------------------
 
-_ANSI = sys.stdout.isatty() and os.name != "nt" or (
+def _is_stdout_tty() -> bool:
+    """Safely check if stdout is a terminal (handles PyInstaller None case)."""
+    return hasattr(sys.stdout, 'isatty') and sys.stdout.isatty()
+
+_ANSI = _is_stdout_tty() and os.name != "nt" or (
     os.name == "nt"
     and os.environ.get("WT_SESSION")  # Windows Terminal
     or os.environ.get("TERM_PROGRAM") == "vscode"
@@ -367,14 +371,14 @@ def create_backup(
                 print(yellow(f"  Warning: skipped {arcname} ({exc})"),
                       file=sys.stderr)
 
-            if sys.stdout.isatty() and (i % interval == 0 or i == total):
+            if _is_stdout_tty() and (i % interval == 0 or i == total):
                 pct = int(i / total * 100)
                 bar_fill = int(pct / 5)
                 bar = "█" * bar_fill + "░" * (20 - bar_fill)
                 print(f"\r  [{bar}] {pct:3d}%  {i}/{total} files",
                       end="", flush=True)
 
-    if sys.stdout.isatty():
+    if _is_stdout_tty():
         print()  # newline after progress bar
 
 
