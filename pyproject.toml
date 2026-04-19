@@ -24,11 +24,12 @@ classifiers = [
     "Topic :: System :: Archiving :: Backup",
     "Topic :: Utilities",
 ]
-# Zero runtime dependencies — pure stdlib
-dependencies = []
+dependencies = [
+    "customtkinter>=5.2.0",
+]
 
 [project.scripts]
-backup_project = "backup_project:main"
+backup_project = "backup_app:main"
 
 [project.optional-dependencies]
 dev = [
@@ -37,7 +38,7 @@ dev = [
 ]
 
 [tool.setuptools]
-py-modules = ["backup_project"]
+py-modules = ["backup_project", "backup_app"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

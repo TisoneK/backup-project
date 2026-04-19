@@ -2,7 +2,7 @@
 """
 install.py — Cross-platform installer for backup_project.
 
-Windows : copies script to %USERPROFILE%\\Scripts\\ and adds it to PATH.
+Windows : copies script to %USERPROFILE%\Scripts\ and adds it to PATH.
 macOS   : copies script to ~/.local/bin/ (or /usr/local/bin/).
 Linux   : copies script to ~/.local/bin/.
 
