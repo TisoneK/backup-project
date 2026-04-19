@@ -4,7 +4,7 @@ build-backend = "setuptools.backends.legacy:build"
 
 [project]
 name = "backup-project"
-version = "2.0.0"
+version = "0.1.1"
 description = "Back up any project directory to a timestamped ZIP, excluding common dev noise."
 readme = "README.md"
 license = { text = "MIT" }
