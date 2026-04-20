@@ -57,8 +57,6 @@ def dim(t: str) -> str:    return _c("2",  t)
 # Default exclusion rules
 # ---------------------------------------------------------------------------
 
-# Entire directory subtrees to skip — matched against the directory *name*
-# (not the full path), so they're platform-independent.
 DEFAULT_EXCLUDED_DIRS: frozenset[str] = frozenset([
     # Python
     ".venv", "venv", "env", ".env",
@@ -84,7 +82,6 @@ DEFAULT_EXCLUDED_DIRS: frozenset[str] = frozenset([
     "$RECYCLE.BIN",
 ])
 
-# Individual file names to always skip
 DEFAULT_EXCLUDED_NAMES: frozenset[str] = frozenset([
     # Windows
     "Thumbs.db", "ehthumbs.db", "ehthumbs_vista.db", "Desktop.ini",
@@ -94,7 +91,6 @@ DEFAULT_EXCLUDED_NAMES: frozenset[str] = frozenset([
     ".eslintcache", ".stylelintcache", ".yarn-integrity",
 ])
 
-# File extensions to always skip
 DEFAULT_EXCLUDED_EXTENSIONS: frozenset[str] = frozenset([
     # Python bytecode
     ".pyc", ".pyo", ".pyd",
@@ -110,19 +106,12 @@ DEFAULT_EXCLUDED_EXTENSIONS: frozenset[str] = frozenset([
     ".localized",
 ])
 
-# Regex patterns for anything not captured above (matched against the full
-# relative path string, using forward slashes regardless of OS)
 DEFAULT_EXCLUDED_PATTERNS: list[str] = [
-    # Python egg / dist-info
     r"\.egg-info[/\\]",
-    # env files (secrets)
     r"(^|[/\\])\.env(\.[^/\\]+)?$",
     r"(^|[/\\])\.envrc$",
-    # coverage data files
     r"(^|[/\\])\.coverage(\..+)?$",
-    # Node pnp
     r"(^|[/\\])\.pnp(\..+)?$",
-    # macOS AppleDouble / resource forks
     r"(^|[/\\])\._",
     r"(^|[/\\])\.AppleDouble",
     r"(^|[/\\])\.LSOverride",
@@ -132,7 +121,6 @@ DEFAULT_EXCLUDED_PATTERNS: list[str] = [
     r"(^|[/\\])\.TemporaryItems",
     r"(^|[/\\])\.Trashes",
     r"(^|[/\\])\.VolumeIcon\.icns",
-    # spyder / rope
     r"(^|[/\\])\.spyderproject",
     r"(^|[/\\])\.ropeproject",
 ]
@@ -264,7 +252,6 @@ def _walk(source: Path, rules: ExclusionRules) -> Iterator[Path]:
     for dirpath, dirnames, filenames in os.walk(source):
         cur = Path(dirpath)
 
-        # Prune excluded directories in-place (modifies the list os.walk uses)
         dirnames[:] = [
             d for d in dirnames
             if not rules.is_dir_excluded(d)
@@ -297,8 +284,6 @@ def _walk_with_stats(
     for dirpath, dirnames, filenames in os.walk(source):
         cur = Path(dirpath)
 
-        # Identify excluded dirs and count their files (shallow, not perfect,
-        # but fast enough for a preview)
         removed = []
         kept = []
         for d in dirnames:
@@ -310,8 +295,6 @@ def _walk_with_stats(
 
         for d in removed:
             subtree = cur / d
-            count = sum(1 for _ in subtree.rglob("*") if (subtree / _).is_file()
-                        ) if subtree.is_dir() else 0
             try:
                 count = sum(
                     1 for root2, _, files2 in os.walk(subtree)
@@ -360,11 +343,11 @@ def create_backup(
     zcomp = _COMPRESSION_MAP.get(compression, zipfile.ZIP_DEFLATED)
 
     total = len(files)
-    interval = max(1, total // 20)  # update roughly every 5 %
+    interval = max(1, total // 20)
 
     with zipfile.ZipFile(destination, "w", compression=zcomp) as zf:
         for i, file in enumerate(files, 1):
-            arcname = file.relative_to(source.parent)  # keeps project root dir inside zip
+            arcname = file.relative_to(source.parent)
             try:
                 zf.write(file, arcname)
             except (PermissionError, OSError) as exc:
@@ -379,7 +362,7 @@ def create_backup(
                       end="", flush=True)
 
     if _is_stdout_tty():
-        print()  # newline after progress bar
+        print()
 
 
 # ---------------------------------------------------------------------------
@@ -406,7 +389,6 @@ def cmd_backup(args: argparse.Namespace) -> int:
 
     rules = ExclusionRules.build(config)
 
-    # Determine destination
     if args.output:
         destination = Path(args.output).resolve()
         if destination.suffix.lower() != ".zip":
@@ -492,7 +474,6 @@ def cmd_dry_run(args: argparse.Namespace) -> int:
         print(f"  {dim('+ ')} {stats.excluded_files} individual files excluded by name/extension/pattern")
         print()
 
-    # Show a sample of included files (up to 20)
     print(bold(f"Sample of included files (first 20 of {len(files)}):"))
     for f in files[:20]:
         rel = f.relative_to(source.parent)
